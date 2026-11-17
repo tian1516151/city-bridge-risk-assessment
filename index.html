@@ -8,16 +8,17 @@
 </head>
 <body>
   <header class="topbar">
-    <div><h1>城市桥梁安全风险评估</h1></div>
+    <div><p class="product-label">附录 H 评分辅助工具</p><h1>城市桥梁安全风险评估</h1><p class="header-note">按“资料筛查 → 可能性 → 后果 → 结果”逐步完成评估</p></div>
     <div class="actions"><button id="exampleBtn" class="secondary">载入附录示例</button><button id="printBtn">打印评估报告</button></div>
   </header>
   <main>
-    <nav class="tabs" aria-label="评估步骤">
-      <button class="tab active" data-tab="profile">01 基本资料与筛查</button>
-      <button class="tab" data-tab="likelihood">02 可能性评估 P</button>
-      <button class="tab" data-tab="consequence">03 后果评估 C</button>
-      <button class="tab" data-tab="result">04 评估结果</button>
+    <nav class="tabs" aria-label="评估步骤" role="tablist">
+      <button class="tab active" data-tab="profile" role="tab" aria-selected="true">01 <span>基本资料与筛查</span></button>
+      <button class="tab" data-tab="likelihood" role="tab" aria-selected="false">02 <span>可能性评估 P</span></button>
+      <button class="tab" data-tab="consequence" role="tab" aria-selected="false">03 <span>后果评估 C</span></button>
+      <button class="tab" data-tab="result" role="tab" aria-selected="false">04 <span>评估结果</span></button>
     </nav>
+    <p id="stepHint" class="step-hint" aria-live="polite">当前：第 1 步，共 4 步 · 先录入桥梁资料并查看是否需要优先评估。</p>
     <section id="profile" class="panel active">
       <div class="panel-head"><div><p class="kicker">基础信息</p><h2>桥梁资料与优先评估筛查</h2></div><p>满足表 H.1 任一条件的桥梁，应优先开展安全风险评估。</p></div>
       <div class="form-grid basics">
@@ -32,23 +33,28 @@
         <label>其他表 H.1 情形<select id="otherPriority"><option value="none">无</option><option value="structure">特殊结构或施工质量存疑</option><option value="hazard">防撞不足、巡查不易、灾害易发等</option><option value="heritage">省级及以上文物保护或管理单位要求</option></select></label>
       </div>
       <div id="priorityResult" class="priority-result"></div>
+      <div class="panel-actions"><button class="next-step" data-next="likelihood">继续：可能性评估 P</button></div>
     </section>
     <section id="likelihood" class="panel">
       <div class="panel-head"><div><p class="kicker">表 H.7 · 表 H.9</p><h2>可能性评估 P</h2></div><p>P 为 13 项指标按参考权重加权的得分；P&lt;2 至 P≥8 对应 1 至 5 级。</p></div>
       <div id="likelihoodFields" class="score-grid"></div>
+      <div class="panel-actions"><button class="secondary prev-step" data-prev="profile">返回资料筛查</button><button class="next-step" data-next="consequence">继续：后果评估 C</button></div>
     </section>
     <section id="consequence" class="panel">
       <div class="panel-head"><div><p class="kicker">表 H.8 · 表 H.9</p><h2>后果严重性 C</h2></div><p>C 为 7 项指标按参考权重加权的得分；C&lt;2 至 C≥8 对应 1 至 5 级。</p></div>
       <div id="consequenceFields" class="score-grid"></div>
+      <div class="panel-actions"><button class="secondary prev-step" data-prev="likelihood">返回可能性评估</button><button class="next-step" data-next="result">查看风险结果</button></div>
     </section>
     <section id="result" class="panel">
       <div class="panel-head"><div><p class="kicker">表 H.2 · H.3 · H.5 · H.6</p><h2>风险评估结果</h2></div><p>风险等级由“可能性等级 × 后果严重性等级”矩阵确定。</p></div>
       <div class="metrics"><article><span>可能性得分 P</span><strong id="pScore">0.00</strong><em id="pLevel">等级 1</em></article><article><span>后果得分 C</span><strong id="cScore">0.00</strong><em id="cLevel">等级 1</em></article><article id="riskCard"><span>风险等级</span><strong id="riskLevel">IV</strong><em id="riskText">低</em></article></div>
       <div class="result-layout"><article class="report-card"><h3>管控建议</h3><p id="controlAdvice">定期巡查维护；原则上无需开展智慧监测工作。</p><h3>优先筛查结论</h3><p id="prioritySummary">尚未触发表 H.1 的筛查条件。</p></article><article class="report-card"><h3>风险矩阵</h3><div id="matrix" class="matrix"></div></article></div>
       <article class="report-card breakdown"><h3>计分明细</h3><table><thead><tr><th>指标</th><th>取值</th><th>权重</th><th>加权得分</th></tr></thead><tbody id="breakdown"></tbody></table></article>
+      <div class="panel-actions"><button class="secondary prev-step" data-prev="consequence">返回后果评估</button><button class="next-step" data-next="profile">从头查看资料</button></div>
     </section>
   </main>
   <footer>依据《城市桥梁安全风险评估方法选择与示例》附录 H 制作 · 参考权重见表 H.9</footer>
   <script src="app.js"></script>
 </body>
 </html>
+

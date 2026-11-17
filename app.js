@@ -24,6 +24,12 @@ const consequence = [
 ];
 const scoreValues = {};
 const $ = id => document.getElementById(id);
+const stepHints = {
+  profile: '当前：第 1 步，共 4 步 · 先录入桥梁资料并查看是否需要优先评估。',
+  likelihood: '当前：第 2 步，共 4 步 · 按表 H.7 选择最符合实际的可能性指标。',
+  consequence: '当前：第 3 步，共 4 步 · 按表 H.8 选择事故后果严重性指标。',
+  result: '当前：第 4 步，共 4 步 · 查看风险等级、管控建议和逐项计分依据。'
+};
 function renderFields(items, target) {
   $(target).innerHTML = items.map(([id,name,weight,options]) => `<article class="score-field"><h3>${id} · ${name}<span class="weight">权重 ${weight}</span></h3><p>按附录表格选择与实际情况最相符的取值。</p><label>评估依据<select id="${id}">${options.map(([label,value])=>`<option value="${value}">${label}（${value}分）</option>`).join('')}</select></label></article>`).join('');
 }
@@ -61,5 +67,14 @@ function syncBasics() {
   const tr=$('trafficRole').value; $('P22').value=tr==='heavy'?10:tr==='main'?7:3; $('C21').value=tr==='heavy'?10:tr==='main'?7:2;
 }
 function loadExample() { $('bridgeName').value='附录示例桥梁'; $('bridgeType').value='梁桥'; $('condition').value='A'; $('serviceYears').value=17; $('maintenance').value='III'; $('length').value=366.9; $('span').value=54.4; $('trafficRole').value='main'; syncBasics(); Object.assign(scoreValues,{P12:10,P14:0,P15:3,P21:2,P31:7,P32:0,P41:0,P42:5,P43:0,C31:10,C32:10,C41:0,C42:10}); Object.entries(scoreValues).forEach(([k,v])=>{if($(k))$(k).value=v}); update(); }
-function init(){renderFields(likelihood,'likelihoodFields');renderFields(consequence,'consequenceFields');document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')}));document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',()=>{if(['condition','serviceYears','maintenance','bridgeType','length','span','trafficRole'].includes(e.id))syncBasics();update()}));$('exampleBtn').addEventListener('click',loadExample);$('printBtn').addEventListener('click',()=>window.print());syncBasics();update();}
+function showStep(tabId) {
+  document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+  const tab = document.querySelector(`.tab[data-tab="${tabId}"]`);
+  tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+  document.querySelectorAll('.tab:not(.active)').forEach(x=>x.setAttribute('aria-selected','false'));
+  $(tabId).classList.add('active'); $('stepHint').textContent=stepHints[tabId];
+  if (window.matchMedia('(max-width: 780px)').matches) document.querySelector('.tabs').scrollTo({left:tab.offsetLeft-12,behavior:'smooth'});
+}
+function init(){renderFields(likelihood,'likelihoodFields');renderFields(consequence,'consequenceFields');document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showStep(b.dataset.tab)));document.querySelectorAll('[data-next],[data-prev]').forEach(b=>b.addEventListener('click',()=>showStep(b.dataset.next||b.dataset.prev)));document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',()=>{if(['condition','serviceYears','maintenance','bridgeType','length','span','trafficRole'].includes(e.id))syncBasics();update()}));$('exampleBtn').addEventListener('click',loadExample);$('printBtn').addEventListener('click',()=>window.print());syncBasics();update();}
 init();
+
